@@ -1,0 +1,48 @@
+[project]
+name = "bundestag-analysis"
+version = "1.0.0"
+description = "NLP analysis library for German Bundestag speeches"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.27.0",
+    "httpx-sse>=0.4.0",
+    "spacy>=3.7.0",
+    "rich>=13.0.0",
+    "click>=8.1.0",
+    "pandas>=2.0.0",
+    "orjson>=3.9.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "commitizen>=4.1.0",
+    "pre-commit>=4.0.0",
+]
+
+[project.scripts]
+bundestag-analysis = "noun_analysis.cli:main"
+noun-analysis = "noun_analysis.cli:main"  # Backward compatibility
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/noun_analysis", "src/bundestag_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+version_files = ["pyproject.toml:^version"]
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_incremental = true
