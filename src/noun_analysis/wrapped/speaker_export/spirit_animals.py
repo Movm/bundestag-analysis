@@ -43,9 +43,9 @@ class SpiritAnimalMixin:
             "interruptions_given": drama.get("interruptionsGiven", 0),
             "interruptions_received": drama.get("interruptionsReceived", 0),
 
-            # Signature words
-            "sig_ratio": signature_words[0]["ratioParty"] if signature_words else 0,
-            "sig_word_count": len([w for w in signature_words if w["ratioParty"] >= 5]),
+            # Signature words (now uses 'ratio' key from Bundestag comparison)
+            "sig_ratio": signature_words[0]["ratio"] if signature_words else 0,
+            "sig_word_count": len([w for w in signature_words if w["ratio"] >= 5]),
             "top_sig_word": signature_words[0] if signature_words else None,
 
             # Tone scores (0-100)

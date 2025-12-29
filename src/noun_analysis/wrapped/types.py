@@ -8,8 +8,9 @@ import re
 Gender = Literal["male", "female", "unknown"]
 
 # Regex patterns for parsing parliamentary annotations
+# Note: Party group includes digits for "BÜNDNIS 90/DIE GRÜNEN"
 INTERRUPTER_PATTERN = re.compile(
-    r'\(([A-ZÄÖÜ][^\[\]]{2,40})\s*\[([A-ZÄÖÜa-zäöü/\s]+)\]:[^)]+\)'
+    r'\(([A-ZÄÖÜ][^\[\]]{2,40})\s*\[([A-ZÄÖÜa-zäöü0-9/\s-]+)\]:[^)]+\)'
 )
 APPLAUSE_PATTERN = re.compile(
     r'\(Beifall bei (?:der |dem )?([^)]+)\)'

@@ -12,7 +12,7 @@ import re
 FACTION_PATTERNS = {
     "CDU/CSU": r"(?:Gast|-)?(?:\s*C\s*[DSMU]\s*S?[DU]\s*(?:\s*[/,':!.-]?)*\s*(?:\s*C+\s*[DSs]?\s*[UÙ]?\s*)?)(?:-?Hosp\.|-Gast|1)?",
     "SPD": r"\s*'?S(?:PD|DP)(?:\.|-Gast)?",
-    "GRÜNE": r"(?:BÜNDNIS\s*(?:90)?/?(?:\s*D[1I]E)?|Bündnis\s*90/(?:\s*D[1I]E)?)?\s*[GC]R[UÜ].?\s*[ÑN]EN?(?:/Bündnis 90)?|BÜNDNISSES?\s*90/\s*DIE\s*GRÜNEN|Grünen",
+    "GRÜNE": r"(?:BÜNDNIS\s*(?:90)?/?(?:\s*D[1I]E)?|Bündnis\s*90/(?:\s*D[1I]E)?)?\s*[GC]R?[UÜ].?\s*[ÑN]EN?(?:/Bündnis 90)?|BÜNDNISSES?\s*90/\s*DIE\s*GR?ÜNEN|Grünen",
     "FDP": r"\s*F\.?\s*[PDO][.']?[DP]\.?",
     "AfD": r"^AfD$|Alternative für Deutschland",
     "DIE LINKE": r"DIE\s*LIN\s?KEN?|LIN\s?KEN|Die Linke",

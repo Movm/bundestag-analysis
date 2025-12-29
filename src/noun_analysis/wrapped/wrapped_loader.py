@@ -18,7 +18,7 @@ import pandas as pd
 from noun_analysis.parser import parse_speeches_from_protocol
 from noun_analysis.speech_aggregation import aggregate_speeches_by_type
 from noun_analysis.text_utils import strip_parenthetical_content, extract_name_parts
-from noun_analysis.factions import extract_parties_from_applause
+from noun_analysis.factions import extract_parties_from_applause, normalize_party
 from .types import (
     WrappedDataBase,
     INTERRUPTER_PATTERN,
@@ -540,13 +540,14 @@ def load_wrapped_data(results_dir: Path, data_dir: Path, cls=None):
     # Parse drama stats from RAW protocol fullText (before parentheticals stripped)
     # This is necessary because parse_speeches_from_protocol() strips interruptions
     drama_stats = {
-        "interrupters": Counter(),  # speaker -> count of times they interrupted
-        "interrupted": Counter(),   # speaker -> count of interruptions in their speech
+        "interrupters": Counter(),  # (name, party) -> count of times they interrupted
+        "interrupted": Counter(),   # (name, party) -> count of interruptions in their speech
+        "cross_party": Counter(),   # (interrupter_party, interrupted_party) -> count
         "applause_by_party": Counter(),  # party -> applause count
         "heckles_by_party": Counter(),   # party -> heckle count
-        "positive_interjections": Counter(),  # speaker -> count of positive (Zustimmung)
-        "negative_interjections": Counter(),  # speaker -> count of negative (Kritik)
-        "neutral_interjections": Counter(),   # speaker -> count of neutral (unclear)
+        "positive_interjections": Counter(),  # (name, party) -> count of positive (Zustimmung)
+        "negative_interjections": Counter(),  # (name, party) -> count of negative (Kritik)
+        "neutral_interjections": Counter(),   # (name, party) -> count of neutral (unclear)
         "neutral_texts": [],  # raw text of neutral interjections for analysis
     }
 
@@ -568,7 +569,10 @@ def load_wrapped_data(results_dir: Path, data_dir: Path, cls=None):
             speaker_lastname = normalize_name_for_comparison(speaker)
             for match in INTERRUPTER_PATTERN.finditer(raw_speech_text):
                 interrupter_name = match.group(1).strip()
-                interrupter_party = match.group(2).strip()
+                interrupter_party_raw = match.group(2).strip()
+
+                # Normalize party name (e.g., "BÜNDNIS 90/DIE GRÜNEN" -> "GRÜNE")
+                interrupter_party = normalize_party(interrupter_party_raw) or interrupter_party_raw
 
                 # Skip noise patterns (Beifall, Zuruf mixed with names)
                 if any(x in interrupter_name for x in ["Beifall", "Zuruf", "Lachen", "Heiterkeit", "Widerspruch"]):
@@ -588,6 +592,9 @@ def load_wrapped_data(results_dir: Path, data_dir: Path, cls=None):
 
                 drama_stats["interrupters"][(interrupter_name, interrupter_party)] += 1
                 drama_stats["interrupted"][(speaker, party)] += 1
+
+                # Track cross-party relationships (who interrupted whom)
+                drama_stats["cross_party"][(interrupter_party, party)] += 1
 
                 # Classify as positive/negative/neutral
                 full_match = match.group(0)
